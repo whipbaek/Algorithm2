@@ -40,63 +40,53 @@ return value: list of Segment pairs that intersect
 '''
 def sweepLine(segments):
 
-    for i in range(len(segments)):
-        if(segments[i].isVertical()):
-            print(i, ' ver')
-    temp = []
     pq = PriorityQueue()
 
     for val in range(len(segments)):
+        # segments 의 모든 점들에 대한 정보를 pq에 넣음, 그리고 val을 넣어줌으로 어떤 직선인지, 시작과 끝을 구분할 수 있게 만듬.
         pq.put([segments[val].x1, segments[val].y1, val])
         pq.put([segments[val].x2, segments[val].y2, val])
 
     tree = LLRB()
-
+    anslist = []
     while not pq.empty():
         val = pq.get() # x, y, idx 저장되어 있는 객체
-        # print(val)
+        # 수평선 이라면
         if segments[val[2]].isHorizontal():
             if tree.contains(val[1]):
                 tree.delete(val[1])
             else:
-                # print(val[1])
                 tree.put(val[1], val[1])
+        # 수직선 이라면
         elif segments[val[2]].isVertical():
             rlist = tree.rangeSearch(segments[val[2]].y1, segments[val[2]].y2)
-            print('rval : ', end='')
             for rval in rlist:
-                print(rval, end='')
-            print()
+                for sval in segments:
+                    if rval == sval.y1:
+                        anslist.append([sval, segments[val[2]]])
 
+    result = []
+    for value in anslist:
+        if value not in result:
+            result.append(value)
 
-
-
-
-    #
-    # for val in range(len(ylist)):
-    #     #수평선이라면
-    #     if ylist[val].isHorizontal():
-    #
-    #     #수직선이라면
-    #     elif ylist[val].isVertical():
-    #
-    #
-
-    return ""
+    return result
 
 
 if __name__ == "__main__":
-    '''
-    3 intersections found
-    (1,4)--(8,4) (6,3)--(6,7)
-    (9,6)--(16,6) (13,5.5)--(13,9.5)
-    (0,1)--(15,1) (14,0)--(14,2)
-    '''
+
+    # 3 intersections found
+    # (1,4)--(8,4) (6,3)--(6,7)
+    # (9,6)--(16,6) (13,5.5)--(13,9.5)
+    # (0,1)--(15,1) (14,0)--(14,2)
+
+
     intersections = sweepLine([Segment(0, 1, 15, 1), Segment(14, 0, 14, 2), Segment(1, 4, 8, 4), Segment(6, 3, 6, 7), \
                                Segment(2, 5, 4, 5), Segment(3, 8, 11, 8), Segment(9, 6, 16, 6),
                                Segment(13, 5.5, 13, 9.5)])
     print(intersections)
     print()
+
 
     # Grading example utilizing __eq__() operator
     if intersections == [(Segment(1, 4, 8, 4), Segment(6, 3, 6, 7)), (Segment(9, 6, 16, 6), Segment(13, 5.5, 13, 9.5)), \
@@ -104,17 +94,16 @@ if __name__ == "__main__":
         print("True")
     print()
 
-    '''
-    6 intersections found
-    (1,3)--(6,3) (5,0)--(5,9)
-    (4,7)--(9,7) (5,0)--(5,9)
-    (4,7)--(9,7) (8,6)--(8,10)
-    (11,2)--(17,2) (12,1)--(12,5)
-    (10,4)--(13,4) (12,1)--(12,5)
-    (14,6.5)--(16,6.5) (15,5.5)--(15,7.5)
+    
+    # 6 intersections found
+    # (1,3)--(6,3) (5,0)--(5,9)
+    # (4,7)--(9,7) (5,0)--(5,9)
+    # (4,7)--(9,7) (8,6)--(8,10)
+    # (11,2)--(17,2) (12,1)--(12,5)
+    # (10,4)--(13,4) (12,1)--(12,5)
+    # (14,6.5)--(16,6.5) (15,5.5)--(15,7.5)
     
     intersections = sweepLine([Segment(1, 3, 6, 3), Segment(5, 0, 5, 9), Segment(4, 7, 9, 7), Segment(8, 6, 8, 10), \
                                Segment(10, 4, 13, 4), Segment(11, 2, 17, 2), Segment(12, 1, 12, 5),
                                Segment(15, 5.5, 15, 7.5), Segment(14, 6.5, 16, 6.5)])
     print(intersections)
-'''
